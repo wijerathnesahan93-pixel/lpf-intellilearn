@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { FormField } from '../components/forms/FormField';
 import { Eye, EyeOff, Facebook, Youtube, Instagram, GraduationCap } from 'lucide-react';
 import logoImg from '../assets/logo.jpg';
-import studentReadingImg from '../assets/student_reading.png';
+import studentLibraryImg from '../assets/student_library.png';
 
 // Dynamic transparent image helper to remove white backgrounds in browser canvas
 function TransparentImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
@@ -69,16 +69,27 @@ export function LoginPage() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-10 min-h-screen w-full bg-white select-none">
       
-      {/* Left Column (Branding - 40% Width) */}
-      <div className="hidden lg:flex lg:col-span-4 bg-purple-700 flex-col items-center justify-between p-12 text-white relative overflow-hidden h-screen sticky top-0">
+      {/* Left Column (Branding - 40% Width - Full Bleed Photograph) */}
+      <div className="hidden lg:flex lg:col-span-4 flex-col items-center justify-between p-12 text-white relative overflow-hidden h-screen sticky top-0">
         
-        {/* Subtle, elegant concentric circle lines in the background for texture */}
+        {/* Background Image & Blue Gradient Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={studentLibraryImg} 
+            alt="Student in Library" 
+            className="w-full h-full object-cover" 
+          />
+          {/* Royal Blue Semi-Transparent Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 to-indigo-950/80 mix-blend-multiply" />
+        </div>
+
+        {/* Subtle, elegant concentric circle lines in the background for texture (Gold Accents) */}
         <div className="absolute inset-0 opacity-20 pointer-events-none z-0">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="50" cy="50" r="55" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="50" cy="50" r="70" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="50" cy="50" r="85" fill="none" stroke="white" strokeWidth="0.5" />
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" strokeWidth="0.5" />
+            <circle cx="50" cy="50" r="55" fill="none" stroke="#F59E0B" strokeWidth="0.5" />
+            <circle cx="50" cy="50" r="70" fill="none" stroke="#F59E0B" strokeWidth="0.5" />
+            <circle cx="50" cy="50" r="85" fill="none" stroke="#F59E0B" strokeWidth="0.5" />
           </svg>
         </div>
 
@@ -89,14 +100,8 @@ export function LoginPage() {
           </h2>
         </div>
 
-        {/* Centered High-Quality Cutout Image */}
-        <div className="w-full flex items-center justify-center my-auto z-10">
-          <TransparentImage 
-            src={studentReadingImg} 
-            alt="Student Reading" 
-            className="max-h-[380px] w-auto object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-[1.02]" 
-          />
-        </div>
+        {/* Middle decorative text box or spacing */}
+        <div className="my-auto z-10" />
 
         {/* Bottom Small Text */}
         <div className="w-full text-center text-xs text-purple-200/50 z-10 pb-4">
@@ -107,7 +112,7 @@ export function LoginPage() {
       {/* Right Column (Login Form - 60% Width) */}
       <div className="col-span-12 lg:col-span-6 flex flex-col justify-between p-8 sm:p-12 md:p-16 bg-white min-h-screen">
         
-        {/* Empty placeholder for alignment / top spacing */}
+        {/* Empty placeholder for top spacing */}
         <div className="hidden lg:block h-6" />
 
         {/* Form Container (perfectly centered) */}
@@ -116,18 +121,22 @@ export function LoginPage() {
           {/* Header Area */}
           <div className="space-y-4">
             
-            {/* Logo */}
+            {/* Logo (with white background removed dynamically) */}
             <div className="flex items-center gap-3">
-              <img src={logoImg} alt="LPF Logo" className="w-12 h-auto rounded-xl border border-gray-150 shadow-sm" />
+              <TransparentImage 
+                src={logoImg} 
+                alt="LPF Logo" 
+                className="w-12 h-auto rounded-xl border border-gray-150 shadow-sm" 
+              />
               <div>
                 <h3 className="text-sm font-extrabold text-gray-900 leading-tight">LPF IntelliLearn</h3>
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Academic Portal</p>
               </div>
             </div>
 
-            {/* Welcome Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 border border-purple-100/50 rounded-full text-xs font-semibold">
-              <GraduationCap className="w-3.5 h-3.5" />
+            {/* Welcome Badge (Light blue, dark blue text, gold icon) */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-xs font-semibold">
+              <GraduationCap className="w-3.5 h-3.5 text-amber-500" />
               Welcome to LPF Academy
             </div>
 
@@ -154,7 +163,7 @@ export function LoginPage() {
             <FormField label={<span className="text-gray-600 font-semibold text-xs">Email Address <span className="text-red-500">*</span></span>}>
               <input
                 type="email"
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all outline-none text-sm text-gray-800 placeholder-gray-400"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all outline-none text-sm text-gray-800 placeholder-gray-400"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example.educationpro@gmail.com"
@@ -167,7 +176,7 @@ export function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all outline-none text-sm text-gray-800 placeholder-gray-400 pr-10"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all outline-none text-sm text-gray-800 placeholder-gray-400 pr-10"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -176,7 +185,7 @@ export function LoginPage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -189,11 +198,11 @@ export function LoginPage() {
               <label className="flex items-center gap-2 text-gray-500 cursor-pointer select-none text-xs font-semibold">
                 <input 
                   type="checkbox" 
-                  className="rounded border-gray-300 text-purple-600 focus:ring-purple-500/20 w-4 h-4" 
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500/20 w-4 h-4" 
                 />
                 Remember me
               </label>
-              <a href="/login" className="text-purple-700 hover:text-purple-800 hover:underline font-bold text-xs" onClick={(e) => e.preventDefault()}>
+              <a href="/login" className="text-blue-700 hover:text-blue-800 hover:underline font-bold text-xs" onClick={(e) => e.preventDefault()}>
                 Forgot Password?
               </a>
             </div>
@@ -201,11 +210,11 @@ export function LoginPage() {
             {/* Buttons Group */}
             <div className="space-y-3 pt-2">
               
-              {/* Sign In (Primary) */}
+              {/* Sign In (Primary - Royal Blue) */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-lg shadow-sm transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                className="w-full py-2.5 bg-blue-800 hover:bg-blue-900 text-white font-semibold rounded-lg shadow-sm transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
               >
                 {isLoading ? (
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -214,7 +223,7 @@ export function LoginPage() {
                 )}
               </button>
 
-              {/* Sign in with Google (Secondary) */}
+              {/* Sign in with Google (Secondary - White/Gray outline) */}
               <button
                 type="button"
                 className="flex items-center justify-center gap-2.5 w-full border border-gray-300 hover:bg-gray-50 text-gray-700 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all duration-150"
@@ -237,13 +246,13 @@ export function LoginPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full text-[10px] text-gray-400 mt-8 border-t border-gray-100 pt-4 max-w-[420px] mx-auto">
           <p>© 2026 LPF Academy. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-purple-700 transition-colors">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-blue-700 transition-colors">
               <Facebook className="w-3.5 h-3.5" />
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-purple-700 transition-colors">
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-blue-700 transition-colors">
               <Youtube className="w-3.5 h-3.5" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-purple-700 transition-colors">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-blue-700 transition-colors">
               <Instagram className="w-3.5 h-3.5" />
             </a>
           </div>
