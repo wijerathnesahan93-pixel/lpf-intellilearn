@@ -32,6 +32,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        golos: ['Golos Text', 'system-ui', '-apple-system', 'sans-serif'],
       },
     },
   },
