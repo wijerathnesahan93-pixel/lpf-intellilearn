@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import logoImg from '../assets/logo.jpg';
 import childrenBgImg from '../assets/children_bg.png';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -83,13 +85,22 @@ export function LoginPage() {
               <label className="text-black text-[13px] font-bold">
                 Password
               </label>
-              <input
-                type="password"
-                className="h-[46px] w-full rounded-[12px] bg-[#EAEAEA] px-4 outline-none text-[14px] text-gray-800 transition-colors focus:bg-[#D9D9D9]"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="h-[46px] w-full rounded-[12px] bg-[#EAEAEA] pl-4 pr-10 outline-none text-[14px] text-gray-800 transition-colors focus:bg-[#D9D9D9]"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-800 transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-col gap-4 w-full mt-2">
