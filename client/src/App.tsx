@@ -1,25 +1,28 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
-
-// Layouts
-import MainLayout from './components/layout/MainLayout';
-import AuthLayout from './components/layout/AuthLayout';
+import { useAuth } from './contexts/AuthContext';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import { DashboardLayout } from './layouts/DashboardLayout';
 
 // Auth Pages
-import LoginPage from './pages/auth/LoginPage';
-import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
-import ResetPasswordPage from './pages/auth/ResetPasswordPage';
+import { LoginPage } from './pages/LoginPage';
+import { UnauthorizedPage } from './pages/UnauthorizedPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { DashboardRedirect } from './pages/DashboardRedirect';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UsersPage from './pages/admin/UsersPage';
+import StudentsPage from './pages/admin/StudentsPage';
+import TeachersPage from './pages/admin/TeachersPage';
+import ParentsPage from './pages/admin/ParentsPage';
 import AcademicYearsPage from './pages/admin/AcademicYearsPage';
 import ClassesPage from './pages/admin/ClassesPage';
 import CoursesPage from './pages/admin/CoursesPage';
 import SubjectsPage from './pages/admin/SubjectsPage';
-import SystemConfigPage from './pages/admin/SystemConfigPage';
+import TopicsPage from './pages/admin/TopicsPage';
 import EnrollmentsPage from './pages/admin/EnrollmentsPage';
+import SystemConfigPage from './pages/admin/SystemConfigPage';
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -44,88 +47,85 @@ import ParentDashboard from './pages/parent/ParentDashboard';
 import ParentChildrenPage from './pages/parent/ParentChildrenPage';
 import ParentNotificationsPage from './pages/parent/ParentNotificationsPage';
 
+const PlaceholderPage = ({ title }: { title: string }) => (
+  <div className="p-6 bg-white rounded-lg shadow">
+    <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+    <p className="text-gray-500 mt-2">This feature is under development.</p>
+  </div>
+);
+
 const App = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated } = useAuth();
 
   return (
     <Routes>
       {/* Public Routes */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to={`/${user?.role.toLowerCase()}`} />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-      </Route>
+      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       {/* Protected Routes */}
-      <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}>
-        <Route path="/" element={<Navigate to={`/${user?.role.toLowerCase()}`} />} />
-        
+      <Route
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/" element={<DashboardRedirect />} />
+        <Route path="/dashboard" element={<DashboardRedirect />} />
+
         {/* Admin Routes */}
-        {user?.role === 'ADMIN' && (
-          <Route path="/admin">
-            <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="academic-years" element={<AcademicYearsPage />} />
-            <Route path="classes" element={<ClassesPage />} />
-            <Route path="courses" element={<CoursesPage />} />
-            <Route path="subjects" element={<SubjectsPage />} />
-            <Route path="enrollments" element={<EnrollmentsPage />} />
-            <Route path="settings" element={<SystemConfigPage />} />
-          </Route>
-        )}
+        <Route path="/admin">
+          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
+          <Route path="users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage /></ProtectedRoute>} />
+          <Route path="students" element={<ProtectedRoute allowedRoles={['ADMIN']}><StudentsPage /></ProtectedRoute>} />
+          <Route path="teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
+          <Route path="parents" element={<ProtectedRoute allowedRoles={['ADMIN']}><ParentsPage /></ProtectedRoute>} />
+          <Route path="academic-years" element={<ProtectedRoute allowedRoles={['ADMIN']}><AcademicYearsPage /></ProtectedRoute>} />
+          <Route path="classes" element={<ProtectedRoute allowedRoles={['ADMIN']}><ClassesPage /></ProtectedRoute>} />
+          <Route path="courses" element={<ProtectedRoute allowedRoles={['ADMIN']}><CoursesPage /></ProtectedRoute>} />
+          <Route path="subjects" element={<ProtectedRoute allowedRoles={['ADMIN']}><SubjectsPage /></ProtectedRoute>} />
+          <Route path="topics" element={<ProtectedRoute allowedRoles={['ADMIN']}><TopicsPage /></ProtectedRoute>} />
+          <Route path="enrollments" element={<ProtectedRoute allowedRoles={['ADMIN']}><EnrollmentsPage /></ProtectedRoute>} />
+          <Route path="config" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+        </Route>
 
         {/* Teacher Routes */}
-        <Route
-          element={
-            <ProtectedRoute allowedRoles={['TEACHER']}>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/teacher/dashboard" element={<PlaceholderPage title="Teacher Dashboard" />} />
-          <Route path="/teacher/classes" element={<PlaceholderPage title="My Classes" />} />
-          <Route path="/teacher/subjects" element={<PlaceholderPage title="My Subjects" />} />
-          <Route path="/teacher/assignments" element={<PlaceholderPage title="Assignments" />} />
-          <Route path="/teacher/questions" element={<PlaceholderPage title="Question Bank" />} />
-          <Route path="/teacher/assessments" element={<PlaceholderPage title="Assessments" />} />
-          <Route path="/teacher/analytics" element={<PlaceholderPage title="Analytics" />} />
+        <Route path="/teacher">
+          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherDashboard /></ProtectedRoute>} />
+          <Route path="classes" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Classes" /></ProtectedRoute>} />
+          <Route path="subjects" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Subjects" /></ProtectedRoute>} />
+          <Route path="assignments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssignmentsPage /></ProtectedRoute>} />
+          <Route path="submissions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherSubmissionsPage /></ProtectedRoute>} />
+          <Route path="questions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherQuestionsPage /></ProtectedRoute>} />
+          <Route path="assessments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssessmentsPage /></ProtectedRoute>} />
+          <Route path="analytics" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAnalyticsPage /></ProtectedRoute>} />
         </Route>
 
         {/* Student Routes */}
-        <Route
-          element={
-            <ProtectedRoute allowedRoles={['STUDENT']}>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/student/dashboard" element={<PlaceholderPage title="Student Dashboard" />} />
-          <Route path="/student/subjects" element={<PlaceholderPage title="My Subjects" />} />
-          <Route path="/student/assignments" element={<PlaceholderPage title="Assignments" />} />
-          <Route path="/student/assessments" element={<PlaceholderPage title="Assessments" />} />
-          <Route path="/student/results" element={<PlaceholderPage title="Results" />} />
-          <Route path="/student/performance" element={<PlaceholderPage title="Performance" />} />
-          <Route path="/student/recommendations" element={<PlaceholderPage title="Recommendations" />} />
+        <Route path="/student">
+          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentDashboard /></ProtectedRoute>} />
+          <Route path="subjects" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentSubjectsPage /></ProtectedRoute>} />
+          <Route path="lessons" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentLessonsPage /></ProtectedRoute>} />
+          <Route path="assignments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssignmentsPage /></ProtectedRoute>} />
+          <Route path="assessments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssessmentsPage /></ProtectedRoute>} />
+          <Route path="results" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentResultsPage /></ProtectedRoute>} />
+          <Route path="performance" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentPerformancePage /></ProtectedRoute>} />
+          <Route path="recommendations" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentRecommendationsPage /></ProtectedRoute>} />
         </Route>
 
         {/* Parent Routes */}
-        <Route
-          element={
-            <ProtectedRoute allowedRoles={['PARENT']}>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/parent/dashboard" element={<PlaceholderPage title="Parent Dashboard" />} />
-          <Route path="/parent/children" element={<PlaceholderPage title="My Children" />} />
-          <Route path="/parent/notifications" element={<PlaceholderPage title="Notifications" />} />
+        <Route path="/parent">
+          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentDashboard /></ProtectedRoute>} />
+          <Route path="children" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentChildrenPage /></ProtectedRoute>} />
+          <Route path="notifications" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentNotificationsPage /></ProtectedRoute>} />
         </Route>
+      </Route>
 
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </AuthProvider>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
-}
+};
 
 export default App;
+
