@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import logoImg from '../assets/logo.jpg';
 import {
-  GraduationCap,
   LayoutDashboard,
   Users,
   BookOpen,
@@ -115,11 +115,9 @@ export function DashboardLayout() {
         )}
       >
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-200">
-          <div className="p-2 bg-primary-600 rounded-lg">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
+          <img src={logoImg} alt="LPF Logo" className="w-12 h-auto rounded-lg bg-white p-0.5 border border-gray-100 shadow-sm" />
           <div>
-            <h1 className="text-lg font-bold text-gray-900">LPF IntelliLearn</h1>
+            <h1 className="text-base font-bold text-gray-900 leading-tight">LPF IntelliLearn</h1>
             <p className="text-xs text-gray-500">{user.role.charAt(0) + user.role.slice(1).toLowerCase()} Portal</p>
           </div>
           <button

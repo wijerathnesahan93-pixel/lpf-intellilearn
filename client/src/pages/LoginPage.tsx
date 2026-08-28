@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
 import { FormField } from '../components/forms/FormField';
-import { GraduationCap, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
+import logoImg from '../assets/logo.jpg';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -34,9 +35,9 @@ export function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100 px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4">
-            <GraduationCap className="w-8 h-8 text-white" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center mb-3">
+            <img src={logoImg} alt="LPF Logo" className="w-28 h-auto rounded-2xl shadow-sm bg-white p-1 border border-gray-150" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">LPF IntelliLearn</h1>
           <p className="text-gray-500 mt-1">Intelligent Learning & Academic Management</p>
