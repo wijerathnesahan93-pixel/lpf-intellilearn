@@ -11,18 +11,17 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { DashboardRedirect } from './pages/DashboardRedirect';
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import UsersPage from './pages/admin/UsersPage';
-import StudentsPage from './pages/admin/StudentsPage';
-import TeachersPage from './pages/admin/TeachersPage';
-import ParentsPage from './pages/admin/ParentsPage';
-import AcademicYearsPage from './pages/admin/AcademicYearsPage';
-import ClassesPage from './pages/admin/ClassesPage';
-import CoursesPage from './pages/admin/CoursesPage';
-import SubjectsPage from './pages/admin/SubjectsPage';
-import TopicsPage from './pages/admin/TopicsPage';
-import EnrollmentsPage from './pages/admin/EnrollmentsPage';
-import SystemConfigPage from './pages/admin/SystemConfigPage';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { StudentsPage } from './pages/admin/StudentsPage';
+import { TeachersPage } from './pages/admin/TeachersPage';
+import { ParentsPage } from './pages/admin/ParentsPage';
+import { AcademicYearsPage } from './pages/admin/AcademicYearsPage';
+import { ClassesPage } from './pages/admin/ClassesPage';
+import { CoursesPage } from './pages/admin/CoursesPage';
+import { SubjectsPage } from './pages/admin/SubjectsPage';
+import { TopicsPage } from './pages/admin/TopicsPage';
+import { EnrollmentsPage } from './pages/admin/EnrollmentsPage';
+import { SystemConfigPage } from './pages/admin/SystemConfigPage';
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -77,7 +76,7 @@ const App = () => {
         {/* Admin Routes */}
         <Route path="/admin">
           <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
-          <Route path="users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage /></ProtectedRoute>} />
+          <Route path="users" element={<ProtectedRoute allowedRoles={['ADMIN']}><PlaceholderPage title="Users Management" /></ProtectedRoute>} />
           <Route path="students" element={<ProtectedRoute allowedRoles={['ADMIN']}><StudentsPage /></ProtectedRoute>} />
           <Route path="teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
           <Route path="parents" element={<ProtectedRoute allowedRoles={['ADMIN']}><ParentsPage /></ProtectedRoute>} />
