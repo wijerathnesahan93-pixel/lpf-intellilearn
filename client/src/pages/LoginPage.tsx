@@ -1,11 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Button } from '../components/ui/Button';
 import { FormField } from '../components/forms/FormField';
 import { Eye, EyeOff, Facebook, Youtube, Instagram } from 'lucide-react';
 import logoImg from '../assets/logo.jpg';
 import studentReadingImg from '../assets/student_reading.png';
+
+// Dynamic transparent image helper to remove white backgrounds in browser canvas
+function TransparentImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [processedSrc, setProcessedSrc] = useState<string>('');
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        // Loop through pixels and make white/near-white pixels transparent
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          if (r > 240 && g > 240 && b > 240) {
+            data[i + 3] = 0; // alpha = 0
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        setProcessedSrc(canvas.toDataURL());
+      }
+    };
+  }, [src]);
+
+  return <img src={processedSrc || src} alt={alt} className={className} />;
+}
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -34,47 +67,48 @@ export function LoginPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen bg-gray-50">
+    <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen bg-white">
       
-      {/* Left Panel: Purple Brand Illustration (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-br from-purple-800 to-indigo-900 flex-col items-center justify-between p-12 text-white relative overflow-hidden">
-        {/* Background Decorative Circles */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -ml-20 -mb-20" />
-        
-        {/* Left header */}
-        <div className="w-full text-left z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-semibold tracking-wider text-purple-200 uppercase mb-4">
-            🎓 Welcome to LPF Academy
+      {/* Left Panel: Curved Purple Card Container */}
+      <div className="hidden lg:flex lg:col-span-5 items-center justify-center p-8 bg-white border-r border-gray-100 select-none">
+        <div className="relative w-full max-w-[360px] h-[550px] bg-gradient-to-b from-purple-700 to-indigo-800 rounded-t-[24px] overflow-hidden flex flex-col justify-between p-8 text-white shadow-xl">
+          
+          {/* Subtle concentric SVG curves in background */}
+          <div className="absolute inset-0 opacity-15 pointer-events-none z-0">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <circle cx="50" cy="-10" r="50" fill="none" stroke="white" strokeWidth="0.5" />
+              <circle cx="50" cy="-10" r="70" fill="none" stroke="white" strokeWidth="0.5" />
+              <circle cx="50" cy="-10" r="90" fill="none" stroke="white" strokeWidth="0.5" />
+              <circle cx="50" cy="-10" r="110" fill="none" stroke="white" strokeWidth="0.5" />
+            </svg>
           </div>
-          <h2 className="text-3xl font-extrabold leading-tight">
-            Empowering Minds,<br />Enabling Futures.
-          </h2>
-        </div>
 
-        {/* Big Illustration */}
-        <div className="w-full flex items-center justify-center my-8 z-10">
-          <div className="relative">
-            {/* Curved background cut behind student */}
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-700/80 to-purple-600/30 rounded-full scale-90 -translate-y-4" />
-            <img 
+          {/* White Semi-Circle/Arch cutout at the bottom */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[140%] h-[160px] bg-white rounded-t-[100%] translate-y-[35%] z-0 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]" />
+          
+          {/* Branding Content (centered) */}
+          <div className="z-10 text-center mt-6">
+            <h2 className="text-xl font-extrabold tracking-wider uppercase text-purple-100">
+              La Petite Fleur
+            </h2>
+            <div className="w-12 h-0.5 bg-purple-400 mx-auto mt-2 rounded-full" />
+          </div>
+
+          {/* Student Reading Image overlapping the bottom white arch */}
+          <div className="relative z-10 w-full flex justify-center mb-[-12px]">
+            <TransparentImage 
               src={studentReadingImg} 
               alt="Student Reading" 
-              className="max-h-[360px] w-auto drop-shadow-2xl relative z-10 transition-transform duration-700 hover:scale-105" 
+              className="max-h-[340px] w-auto drop-shadow-2xl object-contain" 
             />
           </div>
         </div>
-
-        {/* Left footer */}
-        <div className="w-full text-left text-xs text-purple-200/70 z-10">
-          Est. 1993 • Education is an aid to life.
-        </div>
       </div>
 
-      {/* Right Panel: Login Form */}
+      {/* Right Panel: Login Form & Info Paragraph */}
       <div className="col-span-12 lg:col-span-7 flex flex-col justify-between p-8 sm:p-12 md:p-16 bg-white">
         
-        {/* Top Spacer or Small Header */}
+        {/* Top Header Logo */}
         <div className="flex justify-between items-center w-full mb-8 lg:mb-0">
           <div className="flex items-center gap-3">
             <img src={logoImg} alt="LPF Logo" className="w-12 h-auto rounded-xl border border-gray-100 shadow-sm" />
@@ -85,12 +119,15 @@ export function LoginPage() {
           </div>
         </div>
 
-        {/* Form Container */}
-        <div className="w-full max-w-md mx-auto my-auto space-y-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Login</h1>
-            <p className="text-sm text-gray-500 mt-2">
-              Enter your credentials to login to your account
+        {/* Form & Mission Paragraph */}
+        <div className="w-full max-w-lg mx-auto my-auto space-y-6">
+          <div className="space-y-3">
+            <span className="inline-block text-xs font-bold text-purple-700 tracking-wider uppercase bg-purple-50 px-2.5 py-1 rounded-full">
+              🎓 Welcome to LPF Academy
+            </span>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Login</h1>
+            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed font-medium">
+              At La Petite Fleur Schools, we aim to establish a culture in which our children develop a passion for learning that will serve their needs throughout their careers at school and beyond. Our ethos encourages high standards, self-resilience, cooperation, enthusiasm, and initiative throughout each child’s life at school.
             </p>
           </div>
 
@@ -151,7 +188,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 px-4 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-lg shadow-sm hover:shadow transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+              className="w-full py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-semibold rounded-lg shadow-sm hover:shadow transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
             >
               {isLoading ? (
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
