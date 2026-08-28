@@ -9,5 +9,5 @@ export const assessmentsApi = {
   startAttempt: async (id: string) => { const r = await apiClient.post(`/assessments/${id}/start`); return r.data.data; },
   submitAttempt: async (attemptId: string, data: any) => { const r = await apiClient.post(`/assessments/attempts/${attemptId}/submit`, data); return r.data.data; },
   getAttempts: async (id: string) => { const r = await apiClient.get(`/assessments/${id}/attempts`); return r.data.data; },
-  getResults: async (id: string) => { const r = await apiClient.get(`/assessments/${id}/results`); return r.data.data; },
+  getResults: async (id: string) => { const r = await apiClient.get(`/assessments/attempts/${id}/results`); return r.data.data; },
 };

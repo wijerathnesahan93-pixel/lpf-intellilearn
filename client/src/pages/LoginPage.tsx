@@ -142,8 +142,15 @@ export function LoginPage() {
             </div>
           </form>
 
+          <div className="w-full text-center text-[13px] mt-4 font-bold">
+            <span className="text-gray-500">Don't have an account? </span>
+            <a href="/register/student" className="text-[#6C2A77] hover:underline">
+              Register as Student
+            </a>
+          </div>
+
           {/* Copyright Footer */}
-          <div className="w-full text-center text-[#8E8E93] text-[11px] font-medium mt-10">
+          <div className="w-full text-center text-[#8E8E93] text-[11px] font-medium mt-6">
             © 2026 LPF Academy. All rights reserved.
           </div>
 

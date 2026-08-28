@@ -39,14 +39,17 @@ function getNavItems(role: UserRole): NavItem[] {
     case 'ADMIN':
       return [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-        { label: 'Users', path: '/admin/users', icon: <Users className="w-5 h-5" /> },
+        { label: 'Registrations', path: '/admin/student-registrations', icon: <UserCircle className="w-5 h-5" /> },
         { label: 'Students', path: '/admin/students', icon: <School className="w-5 h-5" /> },
         { label: 'Teachers', path: '/admin/teachers', icon: <UserCog className="w-5 h-5" /> },
+        { label: 'Teacher Assign', path: '/admin/teacher-assignments', icon: <ClipboardCheck className="w-5 h-5" /> },
         { label: 'Parents', path: '/admin/parents', icon: <Users className="w-5 h-5" /> },
         { label: 'Academic Years', path: '/admin/academic-years', icon: <Calendar className="w-5 h-5" /> },
+        { label: 'Grades', path: '/admin/grades', icon: <Layers className="w-5 h-5" /> },
         { label: 'Classes', path: '/admin/classes', icon: <Layers className="w-5 h-5" /> },
         { label: 'Courses', path: '/admin/courses', icon: <FolderOpen className="w-5 h-5" /> },
         { label: 'Subjects', path: '/admin/subjects', icon: <BookOpen className="w-5 h-5" /> },
+        { label: 'Class Subjects', path: '/admin/class-subjects', icon: <BookOpen className="w-5 h-5" /> },
         { label: 'Enrollments', path: '/admin/enrollments', icon: <ClipboardCheck className="w-5 h-5" /> },
         { label: 'Reports', path: '/admin/reports', icon: <BarChart3 className="w-5 h-5" /> },
         { label: 'Settings', path: '/admin/config', icon: <Settings className="w-5 h-5" /> },

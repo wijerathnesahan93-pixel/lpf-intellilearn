@@ -73,7 +73,7 @@ export function ClassesPage() {
     } else {
       setEditingItem(null);
       const currentYear = academicYears.find(y => y.isCurrent);
-      setFormData({ name: '', grade: '', section: '', academicYearId: currentYear?.id || '', capacity: 30 });
+      setFormData({ name: '', grade: '', section: 'A', academicYearId: currentYear?.id || '', capacity: 30 });
     }
     setIsModalOpen(true);
   };
@@ -110,7 +110,6 @@ export function ClassesPage() {
   const columns = [
     { key: 'name', header: 'Name', render: (item: any) => item.name },
     { key: 'grade', header: 'Grade', render: (item: any) => item.grade },
-    { key: 'section', header: 'Section', render: (item: any) => item.section || '-' },
     { key: 'academicYear', header: 'Academic Year', render: (item: any) => item.academicYear?.name || '-' },
     { key: 'capacity', header: 'Capacity', render: (item: any) => item.capacity },
     { key: 'enrolled', header: 'Enrolled', render: (item: any) => item._count?.students || 0 },
@@ -161,9 +160,6 @@ export function ClassesPage() {
           </FormField>
           <FormField label="Grade" required>
             <input type="text" className="form-input w-full rounded-md border-gray-300" value={formData.grade} onChange={(e) => setFormData({...formData, grade: e.target.value})} required />
-          </FormField>
-          <FormField label="Section">
-            <input type="text" className="form-input w-full rounded-md border-gray-300" value={formData.section} onChange={(e) => setFormData({...formData, section: e.target.value})} />
           </FormField>
           <FormField label="Academic Year" required>
             <select className="form-select w-full rounded-md border-gray-300" value={formData.academicYearId} onChange={(e) => setFormData({...formData, academicYearId: e.target.value})} required>

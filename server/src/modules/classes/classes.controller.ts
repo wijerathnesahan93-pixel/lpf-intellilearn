@@ -56,4 +56,35 @@ export class ClassesController {
       next(error);
     }
   }
+
+  async listSubjects(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const data = await classesService.listSubjects(req.params.classId);
+      res.json({ data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addSubject(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { subjectId } = req.body;
+      if (!subjectId) {
+        return res.status(400).json({ error: 'subjectId is required' });
+      }
+      const data = await classesService.addSubject(req.params.classId, subjectId);
+      res.status(201).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removeSubject(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      await classesService.removeSubject(req.params.classId, req.params.subjectId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

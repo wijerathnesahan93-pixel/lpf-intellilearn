@@ -64,11 +64,31 @@ export class LessonsService {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any, userId: string, role: string) {
+    const lesson = await prisma.lesson.findUnique({ where: { id } });
+    if (!lesson) throw new NotFoundError('Lesson not found');
+
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || lesson.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator or admin can update this lesson');
+      }
+    }
+
     return prisma.lesson.update({ where: { id }, data });
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string, role: string) {
+    const lesson = await prisma.lesson.findUnique({ where: { id } });
+    if (!lesson) throw new NotFoundError('Lesson not found');
+
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || lesson.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator or admin can delete this lesson');
+      }
+    }
+
     return prisma.lesson.delete({ where: { id } });
   }
 }

@@ -31,6 +31,22 @@ export const recommendationsController = {
   listStudentRecommendations: async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const { studentId } = req.params;
+
+      if (req.user?.role === 'PARENT') {
+        const parent = await prisma.parent.findUnique({ where: { userId: req.user.id } });
+        if (!parent) throw new ForbiddenError('Parent profile not found');
+
+        const link = await prisma.parentChild.findUnique({
+          where: {
+            parentId_studentId: {
+              parentId: parent.id,
+              studentId
+            }
+          }
+        });
+        if (!link) throw new ForbiddenError('You are not authorized to view this student\'s recommendations');
+      }
+
       const data = await recommendationsService.getRecommendations(studentId, req.query);
       res.json({ success: true, ...data });
     } catch (error) {

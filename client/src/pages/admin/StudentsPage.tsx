@@ -81,22 +81,32 @@ export function StudentsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const flatData: any = {
+        firstName: formData.user.firstName,
+        lastName: formData.user.lastName,
+        email: formData.user.email,
+        phone: formData.user.phone || undefined,
+        admissionNumber: formData.admissionNumber,
+        dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString() : undefined,
+        gender: formData.gender,
+        address: formData.address || undefined,
+      };
+
       if (editingItem) {
-        // Prepare data for update (remove password if empty)
-        const updateData: any = { ...formData };
-        if (!updateData.user.password) {
-          delete updateData.user.password;
+        if (formData.user.password) {
+          flatData.password = formData.user.password;
         }
-        await studentsApi.update(editingItem.id, updateData);
+        await studentsApi.update(editingItem.id, flatData);
         toast.success('Updated successfully');
       } else {
-        await studentsApi.create(formData);
+        flatData.password = formData.user.password;
+        await studentsApi.create(flatData);
         toast.success('Created successfully');
       }
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to save');
+      toast.error(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to save');
     }
   };
 

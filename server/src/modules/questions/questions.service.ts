@@ -14,7 +14,9 @@ export class QuestionService {
     if (difficulty) where.difficulty = difficulty;
     
     if (role === 'TEACHER' && teacherId) {
-      where.teacherId = teacherId;
+      const teacher = await prisma.teacher.findUnique({ where: { userId: teacherId } });
+      if (!teacher) throw new ForbiddenError('Teacher profile not found');
+      where.teacherId = teacher.id;
     }
     
     const [total, data] = await Promise.all([
@@ -49,14 +51,17 @@ export class QuestionService {
     return question;
   }
   
-  async create(data: any, teacherId: string) {
+  async create(data: any, userId: string) {
+    const teacher = await prisma.teacher.findUnique({ where: { userId } });
+    if (!teacher) throw new ForbiddenError('Teacher profile not found');
+
     const { options, ...questionData } = data;
     
     return prisma.$transaction(async (tx) => {
       const question = await tx.question.create({
         data: {
           ...questionData,
-          teacherId,
+          teacherId: teacher.id,
           options: {
             create: options
           }
@@ -71,8 +76,11 @@ export class QuestionService {
     const question = await prisma.question.findUnique({ where: { id } });
     if (!question) throw new NotFoundError('Question not found');
     
-    if (role !== 'ADMIN' && question.teacherId !== userId) {
-      throw new ForbiddenError('Only the creator can update this question');
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || question.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator can update this question');
+      }
     }
     
     const { options, ...questionData } = data;
@@ -82,10 +90,14 @@ export class QuestionService {
         await tx.questionOption.deleteMany({ where: { questionId: id } });
       }
       
+      const teacher = await tx.teacher.findUnique({ where: { userId } });
+      const teacherId = teacher ? teacher.id : question.teacherId;
+
       return tx.question.update({
         where: { id },
         data: {
           ...questionData,
+          teacherId,
           ...(options && { options: { create: options } })
         },
         include: { options: true }
@@ -97,8 +109,11 @@ export class QuestionService {
     const question = await prisma.question.findUnique({ where: { id } });
     if (!question) throw new NotFoundError('Question not found');
     
-    if (role !== 'ADMIN' && question.teacherId !== userId) {
-      throw new ForbiddenError('Only the creator or admin can delete this question');
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || question.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator or admin can delete this question');
+      }
     }
     
     await prisma.question.delete({ where: { id } });

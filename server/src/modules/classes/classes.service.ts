@@ -109,4 +109,43 @@ export class ClassesService {
 
     await prisma.class.delete({ where: { id } });
   }
+
+  async listSubjects(classId: string) {
+    const existingClass = await prisma.class.findUnique({ where: { id: classId } });
+    if (!existingClass) throw new NotFoundError('Class not found');
+
+    return prisma.classSubject.findMany({
+      where: { classId },
+      include: { subject: true }
+    });
+  }
+
+  async addSubject(classId: string, subjectId: string) {
+    const existingClass = await prisma.class.findUnique({ where: { id: classId } });
+    if (!existingClass) throw new NotFoundError('Class not found');
+
+    const existingSubject = await prisma.subject.findUnique({ where: { id: subjectId } });
+    if (!existingSubject) throw new NotFoundError('Subject not found');
+
+    const existing = await prisma.classSubject.findUnique({
+      where: { classId_subjectId: { classId, subjectId } }
+    });
+    if (existing) throw new ConflictError('Subject is already assigned to this class');
+
+    return prisma.classSubject.create({
+      data: { classId, subjectId },
+      include: { subject: true }
+    });
+  }
+
+  async removeSubject(classId: string, subjectId: string) {
+    const existing = await prisma.classSubject.findUnique({
+      where: { classId_subjectId: { classId, subjectId } }
+    });
+    if (!existing) throw new NotFoundError('Subject assignment not found');
+
+    return prisma.classSubject.delete({
+      where: { classId_subjectId: { classId, subjectId } }
+    });
+  }
 }

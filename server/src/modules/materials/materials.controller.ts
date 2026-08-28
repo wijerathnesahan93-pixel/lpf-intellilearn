@@ -30,14 +30,14 @@ export class MaterialsController {
 
   async update(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const data = await materialsService.update(req.params.id, req.body, req.file);
+      const data = await materialsService.update(req.params.id, req.body, req.file, req.user!.id, req.user!.role);
       res.json({ data });
     } catch (error) { next(error); }
   }
 
   async delete(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      await materialsService.delete(req.params.id);
+      await materialsService.delete(req.params.id, req.user!.id, req.user!.role);
       res.status(204).end();
     } catch (error) { next(error); }
   }

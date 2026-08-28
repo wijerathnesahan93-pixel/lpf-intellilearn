@@ -84,4 +84,14 @@ export class ParentsController {
       next(error);
     }
   }
+
+  async getChildDashboard(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user?.id) throw new Error('User ID not found in request');
+      const student = await parentsService.getChildDashboard(req.user.id, req.params.studentId);
+      res.json({ data: student });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -97,6 +97,7 @@ model User {
   firstName    String    @map("first_name")
   lastName     String    @map("last_name")
   role         UserRole
+  status       UserStatus @default(APPROVED)
   isActive     Boolean   @default(true) @map("is_active")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
@@ -205,6 +206,7 @@ model Class {
   teacherSubjectAssignments TeacherSubjectAssignment[]
   assignments            Assignment[]
   assessments            Assessment[]
+  subjects               ClassSubject[]
 
   @@unique([academicYearId, grade, section])
   @@map("classes")
@@ -243,6 +245,7 @@ model Subject {
   assessments            Assessment[]
   performanceRecords     PerformanceRecord[]
   recommendations        Recommendation[]
+  classes                ClassSubject[]
 
   @@map("subjects")
 }
@@ -592,4 +595,58 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([userId])
   @@map("audit_logs")
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  number    Int      @unique
+  name      String
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("grades")
+}
+
+model ClassSubject {
+  id        String   @id @default(uuid())
+  classId   String   @map("class_id")
+  subjectId String   @map("subject_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  class   Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, subjectId])
+  @@map("class_subjects")
+}
+
+model StudentRegistration {
+  id              String   @id @default(uuid())
+  firstName       String   @map("first_name")
+  lastName        String   @map("last_name")
+  email           String   @unique
+  passwordHash    String   @map("password_hash")
+  phone           String?
+  dateOfBirth     DateTime? @map("date_of_birth")
+  gender          Gender?
+  address         String?
+  gradeNumber     Int      @map("grade_number")
+  classSection    String   @map("class_section")
+  parentName      String   @map("parent_name")
+  parentEmail     String   @map("parent_email")
+  parentPhone     String?  @map("parent_phone")
+  relationship    String   @default("Parent")
+  status          UserStatus @default(PENDING)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("student_registrations")
 }

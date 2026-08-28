@@ -28,6 +28,8 @@ import assessmentRoutes from './modules/assessments/assessments.routes';
 import analyticsRoutes from './modules/analytics/analytics.routes';
 import recommendationRoutes from './modules/recommendations/recommendations.routes';
 import notificationRoutes from './modules/notifications/notifications.routes';
+import studentRegistrationRoutes from './modules/student-registrations/student-registrations.routes';
+import gradeRoutes from './modules/grades/grades.routes';
 
 const app = express();
 
@@ -72,6 +74,11 @@ app.use('/api/config', configRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/assessments', assessmentRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin/student-registrations', studentRegistrationRoutes);
+app.use('/api/admin/grades', gradeRoutes);
 
 // Error handling
 app.use(errorHandler);

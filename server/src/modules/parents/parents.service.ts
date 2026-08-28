@@ -1,7 +1,7 @@
 import prisma from '../../config/database';
 import { PaginationParams } from '../../types';
 import * as bcrypt from 'bcryptjs';
-import { ConflictError, NotFoundError } from '../../utils/errors';
+import { ConflictError, NotFoundError, ForbiddenError } from '../../utils/errors';
 
 export class ParentsService {
   async list(params: PaginationParams, search?: string) {
@@ -253,5 +253,45 @@ export class ParentsService {
 
     if (!parent) throw new NotFoundError('Parent profile not found');
     return parent.children.map((ps: any) => ps.student);
+  }
+
+  async getChildDashboard(parentUserId: string, studentId: string) {
+    const parent = await prisma.parent.findUnique({ where: { userId: parentUserId } });
+    if (!parent) throw new NotFoundError('Parent profile not found');
+
+    const link = await prisma.parentChild.findUnique({
+      where: {
+        parentId_studentId: {
+          parentId: parent.id,
+          studentId
+        }
+      }
+    });
+
+    if (!link) throw new ForbiddenError('You are not authorized to view this student');
+
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: {
+        user: { select: { firstName: true, lastName: true, email: true } },
+        enrollments: { include: { subject: true, class: true } },
+        assessmentResults: {
+          orderBy: { createdAt: 'desc' },
+          include: { assessment: { include: { subject: true } } }
+        },
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
+          include: { assignment: { include: { subject: true } } }
+        },
+        performanceRecords: {
+          include: { subject: true, topic: true }
+        },
+        recommendations: {
+          include: { subject: true, topic: true }
+        }
+      }
+    });
+
+    return student;
   }
 }

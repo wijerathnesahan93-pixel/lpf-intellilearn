@@ -13,6 +13,7 @@ router.use(authenticate);
 
 // Special route for PARENT role
 router.get('/my-children', authorize('PARENT'), (req, res, next) => controller.getChildren(req as AuthRequest, res, next));
+router.get('/children/:studentId', authorize('PARENT'), (req, res, next) => controller.getChildDashboard(req as AuthRequest, res, next));
 
 // CRUD routes for ADMIN role
 router.get('/', authorize('ADMIN'), (req, res, next) => controller.list(req as AuthRequest, res, next));

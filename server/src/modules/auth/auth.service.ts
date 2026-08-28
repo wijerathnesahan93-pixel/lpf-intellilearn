@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import prisma from '../../config/database';
 import { config } from '../../config';
 import { AuthUser } from '../../types';
-import { UnauthorizedError, NotFoundError } from '../../utils/errors';
-import { LoginInput } from './auth.validation';
+import { UnauthorizedError, NotFoundError, ConflictError } from '../../utils/errors';
+import { LoginInput, StudentRegisterInput } from './auth.validation';
 
 export class AuthService {
   async login(input: LoginInput) {
@@ -14,6 +14,14 @@ export class AuthService {
 
     if (!user || !user.isActive) {
       throw new UnauthorizedError('Invalid email or password');
+    }
+
+    if (user.status === 'PENDING') {
+      throw new UnauthorizedError('Your registration is pending administrator approval.');
+    } else if (user.status === 'REJECTED') {
+      throw new UnauthorizedError('Your registration has been rejected by the administrator.');
+    } else if (user.status === 'SUSPENDED') {
+      throw new UnauthorizedError('Your account has been suspended.');
     }
 
     const isPasswordValid = await bcrypt.compare(input.password, user.passwordHash);
@@ -118,6 +126,38 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async registerStudent(input: StudentRegisterInput) {
+    const existingUser = await prisma.user.findUnique({ where: { email: input.email } });
+    if (existingUser) throw new ConflictError('Email is already registered');
+
+    const existingReg = await prisma.studentRegistration.findFirst({
+      where: { email: input.email, status: 'PENDING' }
+    });
+    if (existingReg) throw new ConflictError('A registration with this email is already pending approval');
+
+    const passwordHash = await bcrypt.hash(input.password, 10);
+
+    return prisma.studentRegistration.create({
+      data: {
+        firstName: input.firstName,
+        lastName: input.lastName,
+        email: input.email,
+        passwordHash,
+        phone: input.phone,
+        dateOfBirth: input.dateOfBirth ? new Date(input.dateOfBirth) : null,
+        gender: input.gender,
+        address: input.address,
+        gradeNumber: input.gradeNumber,
+        classSection: input.classSection,
+        parentName: input.parentName,
+        parentEmail: input.parentEmail,
+        parentPhone: input.parentPhone,
+        relationship: input.relationship || 'Parent',
+        status: 'PENDING'
+      }
+    });
   }
 }
 

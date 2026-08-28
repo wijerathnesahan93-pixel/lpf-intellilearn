@@ -18,4 +18,8 @@ router.post('/', validate(createClassSchema), (req, res, next) => controller.cre
 router.put('/:id', validate(updateClassSchema), (req, res, next) => controller.update(req as AuthRequest, res, next));
 router.delete('/:id', (req, res, next) => controller.delete(req as AuthRequest, res, next));
 
+router.get('/:classId/subjects', (req, res, next) => controller.listSubjects(req as AuthRequest, res, next));
+router.post('/:classId/subjects', (req, res, next) => controller.addSubject(req as AuthRequest, res, next));
+router.delete('/:classId/subjects/:subjectId', (req, res, next) => controller.removeSubject(req as AuthRequest, res, next));
+
 export default router;

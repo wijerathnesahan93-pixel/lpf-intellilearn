@@ -29,6 +29,15 @@ export class AuthController {
       next(error);
     }
   }
+
+  async registerStudent(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await authService.registerStudent(req.body);
+      res.status(201).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const authController = new AuthController();

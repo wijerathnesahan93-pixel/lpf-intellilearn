@@ -30,14 +30,14 @@ export class LessonsController {
 
   async update(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const data = await lessonsService.update(req.params.id, req.body);
+      const data = await lessonsService.update(req.params.id, req.body, req.user!.id, req.user!.role);
       res.json({ data });
     } catch (error) { next(error); }
   }
 
   async delete(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      await lessonsService.delete(req.params.id);
+      await lessonsService.delete(req.params.id, req.user!.id, req.user!.role);
       res.status(204).end();
     } catch (error) { next(error); }
   }

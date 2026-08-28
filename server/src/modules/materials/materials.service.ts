@@ -68,7 +68,17 @@ export class MaterialsService {
     });
   }
 
-  async update(id: string, data: any, file?: any) {
+  async update(id: string, data: any, file: any, userId: string, role: string) {
+    const material = await prisma.learningMaterial.findUnique({ where: { id } });
+    if (!material) throw new NotFoundError('Material not found');
+
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || material.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator or admin can update this material');
+      }
+    }
+
     const updateData = { ...data };
     if (file) {
       updateData.fileUrl = `/uploads/${file.filename}`;
@@ -78,7 +88,17 @@ export class MaterialsService {
     return prisma.learningMaterial.update({ where: { id }, data: updateData });
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string, role: string) {
+    const material = await prisma.learningMaterial.findUnique({ where: { id } });
+    if (!material) throw new NotFoundError('Material not found');
+
+    if (role !== 'ADMIN') {
+      const teacher = await prisma.teacher.findUnique({ where: { userId } });
+      if (!teacher || material.teacherId !== teacher.id) {
+        throw new ForbiddenError('Only the creator or admin can delete this material');
+      }
+    }
+
     return prisma.learningMaterial.delete({ where: { id } });
   }
 }

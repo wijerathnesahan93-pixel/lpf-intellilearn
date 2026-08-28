@@ -79,21 +79,31 @@ export function TeachersPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const flatData: any = {
+        firstName: formData.user.firstName,
+        lastName: formData.user.lastName,
+        email: formData.user.email,
+        phone: formData.phone || undefined,
+        employeeId: formData.employeeId,
+        qualification: formData.qualification || undefined,
+        specialization: formData.specialization || undefined,
+      };
+
       if (editingItem) {
-        const updateData: any = { ...formData };
-        if (!updateData.user.password) {
-          delete updateData.user.password;
+        if (formData.user.password) {
+          flatData.password = formData.user.password;
         }
-        await teachersApi.update(editingItem.id, updateData);
+        await teachersApi.update(editingItem.id, flatData);
         toast.success('Updated successfully');
       } else {
-        await teachersApi.create(formData);
+        flatData.password = formData.user.password;
+        await teachersApi.create(flatData);
         toast.success('Created successfully');
       }
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to save');
+      toast.error(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to save');
     }
   };
 

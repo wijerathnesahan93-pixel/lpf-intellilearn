@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { DashboardLayout } from './layouts/DashboardLayout';
+import { Toaster } from 'react-hot-toast';
 
 // Auth Pages
 import { LoginPage } from './pages/LoginPage';
@@ -22,6 +23,14 @@ import { SubjectsPage } from './pages/admin/SubjectsPage';
 import { TopicsPage } from './pages/admin/TopicsPage';
 import { EnrollmentsPage } from './pages/admin/EnrollmentsPage';
 import { SystemConfigPage } from './pages/admin/SystemConfigPage';
+import StudentRegistrationManagementPage from './pages/admin/StudentRegistrationManagementPage';
+import GradeManagementPage from './pages/admin/GradeManagementPage';
+import ClassSubjectManagementPage from './pages/admin/ClassSubjectManagementPage';
+import TeacherAssignmentPage from './pages/admin/TeacherAssignmentPage';
+
+// Student self-register Pages
+import StudentRegistrationPage from './pages/StudentRegistrationPage';
+import StudentRegistrationSuccessPage from './pages/StudentRegistrationSuccessPage';
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -57,72 +66,81 @@ const App = () => {
   const { user, isAuthenticated } = useAuth();
 
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />} />
-      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/register/student" element={<StudentRegistrationPage />} />
+        <Route path="/register/student/success" element={<StudentRegistrationSuccessPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-      {/* Protected Routes */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/" element={<DashboardRedirect />} />
-        <Route path="/dashboard" element={<DashboardRedirect />} />
+        {/* Protected Routes */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/" element={<DashboardRedirect />} />
+          <Route path="/dashboard" element={<DashboardRedirect />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin">
-          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
-          <Route path="users" element={<ProtectedRoute allowedRoles={['ADMIN']}><PlaceholderPage title="Users Management" /></ProtectedRoute>} />
-          <Route path="students" element={<ProtectedRoute allowedRoles={['ADMIN']}><StudentsPage /></ProtectedRoute>} />
-          <Route path="teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
-          <Route path="parents" element={<ProtectedRoute allowedRoles={['ADMIN']}><ParentsPage /></ProtectedRoute>} />
-          <Route path="academic-years" element={<ProtectedRoute allowedRoles={['ADMIN']}><AcademicYearsPage /></ProtectedRoute>} />
-          <Route path="classes" element={<ProtectedRoute allowedRoles={['ADMIN']}><ClassesPage /></ProtectedRoute>} />
-          <Route path="courses" element={<ProtectedRoute allowedRoles={['ADMIN']}><CoursesPage /></ProtectedRoute>} />
-          <Route path="subjects" element={<ProtectedRoute allowedRoles={['ADMIN']}><SubjectsPage /></ProtectedRoute>} />
-          <Route path="topics" element={<ProtectedRoute allowedRoles={['ADMIN']}><TopicsPage /></ProtectedRoute>} />
-          <Route path="enrollments" element={<ProtectedRoute allowedRoles={['ADMIN']}><EnrollmentsPage /></ProtectedRoute>} />
-          <Route path="config" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+          {/* Admin Routes */}
+          <Route path="/admin">
+            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="users" element={<ProtectedRoute allowedRoles={['ADMIN']}><PlaceholderPage title="Users Management" /></ProtectedRoute>} />
+            <Route path="students" element={<ProtectedRoute allowedRoles={['ADMIN']}><StudentsPage /></ProtectedRoute>} />
+            <Route path="student-registrations" element={<ProtectedRoute allowedRoles={['ADMIN']}><StudentRegistrationManagementPage /></ProtectedRoute>} />
+            <Route path="teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
+            <Route path="parents" element={<ProtectedRoute allowedRoles={['ADMIN']}><ParentsPage /></ProtectedRoute>} />
+            <Route path="academic-years" element={<ProtectedRoute allowedRoles={['ADMIN']}><AcademicYearsPage /></ProtectedRoute>} />
+            <Route path="grades" element={<ProtectedRoute allowedRoles={['ADMIN']}><GradeManagementPage /></ProtectedRoute>} />
+            <Route path="classes" element={<ProtectedRoute allowedRoles={['ADMIN']}><ClassesPage /></ProtectedRoute>} />
+            <Route path="courses" element={<ProtectedRoute allowedRoles={['ADMIN']}><CoursesPage /></ProtectedRoute>} />
+            <Route path="subjects" element={<ProtectedRoute allowedRoles={['ADMIN']}><SubjectsPage /></ProtectedRoute>} />
+            <Route path="class-subjects" element={<ProtectedRoute allowedRoles={['ADMIN']}><ClassSubjectManagementPage /></ProtectedRoute>} />
+            <Route path="teacher-assignments" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeacherAssignmentPage /></ProtectedRoute>} />
+            <Route path="topics" element={<ProtectedRoute allowedRoles={['ADMIN']}><TopicsPage /></ProtectedRoute>} />
+            <Route path="enrollments" element={<ProtectedRoute allowedRoles={['ADMIN']}><EnrollmentsPage /></ProtectedRoute>} />
+            <Route path="config" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+          </Route>
+
+          {/* Teacher Routes */}
+          <Route path="/teacher">
+            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherDashboard /></ProtectedRoute>} />
+            <Route path="classes" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Classes" /></ProtectedRoute>} />
+            <Route path="subjects" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Subjects" /></ProtectedRoute>} />
+            <Route path="assignments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssignmentsPage /></ProtectedRoute>} />
+            <Route path="submissions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherSubmissionsPage /></ProtectedRoute>} />
+            <Route path="questions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherQuestionsPage /></ProtectedRoute>} />
+            <Route path="assessments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssessmentsPage /></ProtectedRoute>} />
+            <Route path="analytics" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAnalyticsPage /></ProtectedRoute>} />
+          </Route>
+
+          {/* Student Routes */}
+          <Route path="/student">
+            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentDashboard /></ProtectedRoute>} />
+            <Route path="subjects" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentSubjectsPage /></ProtectedRoute>} />
+            <Route path="lessons" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentLessonsPage /></ProtectedRoute>} />
+            <Route path="assignments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssignmentsPage /></ProtectedRoute>} />
+            <Route path="assessments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssessmentsPage /></ProtectedRoute>} />
+            <Route path="results" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentResultsPage /></ProtectedRoute>} />
+            <Route path="performance" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentPerformancePage /></ProtectedRoute>} />
+            <Route path="recommendations" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentRecommendationsPage /></ProtectedRoute>} />
+          </Route>
+
+          {/* Parent Routes */}
+          <Route path="/parent">
+            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentDashboard /></ProtectedRoute>} />
+            <Route path="children" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentChildrenPage /></ProtectedRoute>} />
+            <Route path="notifications" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentNotificationsPage /></ProtectedRoute>} />
+          </Route>
         </Route>
 
-        {/* Teacher Routes */}
-        <Route path="/teacher">
-          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherDashboard /></ProtectedRoute>} />
-          <Route path="classes" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Classes" /></ProtectedRoute>} />
-          <Route path="subjects" element={<ProtectedRoute allowedRoles={['TEACHER']}><PlaceholderPage title="My Subjects" /></ProtectedRoute>} />
-          <Route path="assignments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssignmentsPage /></ProtectedRoute>} />
-          <Route path="submissions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherSubmissionsPage /></ProtectedRoute>} />
-          <Route path="questions" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherQuestionsPage /></ProtectedRoute>} />
-          <Route path="assessments" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAssessmentsPage /></ProtectedRoute>} />
-          <Route path="analytics" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAnalyticsPage /></ProtectedRoute>} />
-        </Route>
-
-        {/* Student Routes */}
-        <Route path="/student">
-          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentDashboard /></ProtectedRoute>} />
-          <Route path="subjects" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentSubjectsPage /></ProtectedRoute>} />
-          <Route path="lessons" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentLessonsPage /></ProtectedRoute>} />
-          <Route path="assignments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssignmentsPage /></ProtectedRoute>} />
-          <Route path="assessments" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAssessmentsPage /></ProtectedRoute>} />
-          <Route path="results" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentResultsPage /></ProtectedRoute>} />
-          <Route path="performance" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentPerformancePage /></ProtectedRoute>} />
-          <Route path="recommendations" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentRecommendationsPage /></ProtectedRoute>} />
-        </Route>
-
-        {/* Parent Routes */}
-        <Route path="/parent">
-          <Route path="dashboard" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentDashboard /></ProtectedRoute>} />
-          <Route path="children" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentChildrenPage /></ProtectedRoute>} />
-          <Route path="notifications" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentNotificationsPage /></ProtectedRoute>} />
-        </Route>
-      </Route>
-
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 };
 
